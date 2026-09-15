@@ -1,70 +1,74 @@
-import { Loader2 } from 'lucide-react'
+import { forwardRef } from 'react'
+import Spinner from './Spinner'
 
-const variantClasses = {
-  primary: 'button button-primary',
-  secondary: 'button button-secondary',
-  outline: 'button button-outline',
-  ghost: 'button button-ghost',
-  danger: 'button button-danger',
-  ai: 'button button-ai',
-}
-
-const sizeClasses = {
-  sm: 'button-sm',
-  md: 'button-md',
-  lg: 'button-lg',
-}
-
-function Button({
-  children,
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  disabled = false,
-  leftIcon = null,
-  rightIcon = null,
-  type = 'button',
-  className = '',
-  onClick,
-  ...props
-}) {
-  const variantClass =
-    variantClasses[variant] || variantClasses.primary
-
-  const sizeClass = sizeClasses[size] || sizeClasses.md
-
+const Button = forwardRef(function Button(
+  {
+    children,
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    disabled = false,
+    fullWidth = false,
+    leftIcon,
+    rightIcon,
+    className = '',
+    type = 'button',
+    ...props
+  },
+  ref,
+) {
   const classes = [
-    variantClass,
-    sizeClass,
+    'button',
+    `button-${variant}`,
+    `button-${size}`,
+    fullWidth ? 'button-full-width' : '',
     loading ? 'button-loading' : '',
     className,
   ]
     .filter(Boolean)
     .join(' ')
 
+  const isDisabled = disabled || loading
+
   return (
     <button
-      type={type}
-      className={classes}
-      disabled={disabled || loading}
-      onClick={onClick}
       {...props}
+      ref={ref}
+      type={type}
+      disabled={isDisabled}
+      className={classes}
+      aria-busy={loading ? 'true' : undefined}
     >
       {loading ? (
-        <Loader2
-          size={16}
-          aria-hidden="true"
-          className="button-spinner"
-        />
+        <>
+          <Spinner size="sm" />
+          <span>{children}</span>
+        </>
       ) : (
-        leftIcon
+        <>
+          {leftIcon && (
+            <span
+              className="button-icon"
+              aria-hidden="true"
+            >
+              {leftIcon}
+            </span>
+          )}
+
+          <span>{children}</span>
+
+          {rightIcon && (
+            <span
+              className="button-icon"
+              aria-hidden="true"
+            >
+              {rightIcon}
+            </span>
+          )}
+        </>
       )}
-
-      <span>{children}</span>
-
-      {!loading && rightIcon}
     </button>
   )
-}
+})
 
 export default Button

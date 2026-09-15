@@ -3,34 +3,45 @@ import { Check } from 'lucide-react'
 function Checkbox({
   label,
   description,
-  checked,
+  checked = false,
+  defaultChecked = false,
   onChange,
   disabled = false,
+  required = false,
   id,
-  ...props
+  name,
+  className = '',
 }) {
   const checkboxId =
-    id || `checkbox-${label?.toLowerCase().replace(/\s+/g, '-')}`
+    id || `checkbox-${Math.random().toString(36).slice(2, 9)}`
+
+  const classes = [
+    'checkbox-field',
+    disabled ? 'checkbox-disabled' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <label
-      className={`checkbox-field ${
-        disabled ? 'checkbox-disabled' : ''
-      }`}
       htmlFor={checkboxId}
+      className={classes}
     >
       <span className="checkbox-control">
         <input
           id={checkboxId}
+          name={name}
           type="checkbox"
           checked={checked}
+          defaultChecked={defaultChecked}
           onChange={onChange}
           disabled={disabled}
-          {...props}
+          required={required}
         />
 
-        <span className="checkbox-box">
-          <Check size={13} strokeWidth={3} aria-hidden="true" />
+        <span className="checkbox-box" aria-hidden="true">
+          {checked && <Check size={13} strokeWidth={2.5} />}
         </span>
       </span>
 
